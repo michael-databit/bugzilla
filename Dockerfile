@@ -24,22 +24,17 @@ USER app
 
 RUN perl checksetup.pl --no-database --default-localconfig && \
     rm -rf /app/data /app/localconfig && \
-    mkdir -p /app/data
+    mkdir /app/data
 
-# Switch back to root to handle volume mount permissions
+# Switch back to root to set permissions
 USER root
 RUN chown -R app:app /app/data && \
-    chmod 777 /app/data && \
-    chmod g+s /app/data
-
-# Create a script to ensure permissions are set after volume mount
-RUN echo '#!/bin/bash\nchown -R app:app /app/data\nchmod 777 /app/data\nexec "$@"' > /docker-entrypoint-wrapper.sh && \
-    chmod +x /docker-entrypoint-wrapper.sh
+    chmod 755 /app/data
 
 # Switch back to app user
 USER app
 
 EXPOSE 8000
 
-ENTRYPOINT ["/docker-entrypoint-wrapper.sh"]
+ENTRYPOINT ["/app/scripts/entrypoint.pl"]
 CMD ["httpd"]
