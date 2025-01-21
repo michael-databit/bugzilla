@@ -26,14 +26,6 @@ RUN perl checksetup.pl --no-database --default-localconfig && \
     rm -rf /app/data /app/localconfig && \
     mkdir /app/data
 
-# Switch back to root to set permissions
-USER root
-RUN chown -R app:app /app/data && \
-    chmod 755 /app/data
-
-# Switch back to app user
-USER app
-
 EXPOSE 8000
 
 ENTRYPOINT ["/app/scripts/entrypoint.pl"]
